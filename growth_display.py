@@ -8,14 +8,15 @@ import pygame
 import numpy as np
 from random import randint
 
-INPUT_MOCK_PATH = 'input_array_mock.pkl'
-X = 200
-Y = 300
+INPUT_MOCK_PATH = 'growth_log.pkl'
+X = 300
+Y = 200
 
 def create_array():
+    start_time = time.time()
     x, y = X, Y
     arr = np.zeros((x, y))
-    i, j = int(x / 2), int(y / 2)
+    i, j = int(x / 2), int(y / 2)   
     arr[i, j] = 1
 
     with lzma.open(INPUT_MOCK_PATH, 'wb') as f:
@@ -24,6 +25,8 @@ def create_array():
             arr[i, j] = 1
             i, j = i + randint(-1, 1), j + randint(-1, 1)
             pickle.dump(arr, f)
+    
+    print(f'Generating an array took: {time.time() - start_time}s')
 
 
 def recolor_array(arr):
@@ -53,7 +56,7 @@ if __name__ == '__main__':
         while running:
             try:
                 arr: np.array = recolor_array(pickle.load(input))
-
+                time.sleep(1/480)
                 if display is None:
                     display = pygame.display.set_mode(arr.shape)
 
@@ -64,5 +67,5 @@ if __name__ == '__main__':
                 display.blit(surf, (0, 0))
                 pygame.display.update()
             except EOFError:
-                pass
+                break
         pygame.quit()
