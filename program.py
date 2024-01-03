@@ -5,8 +5,8 @@ import numpy as np
 
 from cell import Cell, CellModel1
 
-SIZE_Y = 720
-SIZE_X = 1280
+SIZE_Y = 300
+SIZE_X = 600
 
 # TODO maybe add CLI support?
 OUTPUT_PATH = 'growth_log.pkl'
@@ -29,14 +29,16 @@ def save_array_state(arr, file):
 
 
 def step(arr):
+    new_arr = np.copy(arr)
     y_size, x_size = arr.shape
     global_grow_chance = np.random.normal()
 
     for row in range(1,y_size-1):
         for col in range(1,x_size-1):
             window = arr[row-1:row+2, col-1:col+2]
-            arr[row][col].grow_shroom(window, global_grow_chance)
+            new_arr[row][col].grow_shroom(window, global_grow_chance)
     
+    return new_arr
 
 def reroll_probabilities(arr):
     y_size, x_size = arr.shape
@@ -53,9 +55,8 @@ if __name__ == "__main__":
         while True:
             generation_i += 1
             start = time.time()
-            #TODO deepcopy before each step may be necessary
             reroll_probabilities(cells)
-            step(cells)
+            cells = step(cells)
             save_array_state(cells, output)
 
             reached_border = False
