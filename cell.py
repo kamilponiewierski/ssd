@@ -8,11 +8,15 @@ class Cell(ABC):
     growth_stage: int
     position: (int, int)
 
-    def grow_shroom(self, neighbourhood: np.array, global_growth_chance: float):
+    def grow_shroom(self, neighbourhood: np.array, global_growth_chance: float) -> int:
+        new_growth_stage = self.growth_stage
+
         model_growth_chance = self.calculate_growth_chance(neighbourhood)
         if self.growth_probability > global_growth_chance:
             if model_growth_chance > np.random.random():
-                self.growth_stage += 1
+                new_growth_stage += 1
+
+        return new_growth_stage
 
     @abstractmethod
     def calculate_growth_chance(self, neighbourhood: np.array) -> float:

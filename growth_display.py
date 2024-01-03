@@ -59,8 +59,7 @@ if __name__ == '__main__':
                 arr: np.array = recolor_array(pickle.load(input))
                 time.sleep(1/30)
                 if display is None:
-                    y, x = arr.shape
-                    display = pygame.display.set_mode((x, y))  # Zwiększenie wielkości okna
+                    display = pygame.display.set_mode(arr.shape) 
                     pygame.display.set_caption("Display Grid")
 
                 surf = pygame.surfarray.make_surface(arr)

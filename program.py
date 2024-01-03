@@ -11,8 +11,9 @@ SIZE_X = 600
 # TODO maybe add CLI support?
 OUTPUT_PATH = 'growth_log.pkl'
 
+
 def create_cell_array() -> np.array:
-    x, y = SIZE_Y, SIZE_X
+    x, y = SIZE_X, SIZE_Y
     arr = np.empty(shape=(x, y), dtype=object)
     for i in range(x):
         for j in range(y):
@@ -29,16 +30,20 @@ def save_array_state(arr, file):
 
 
 def step(arr):
-    new_arr = np.copy(arr)
+    new_arr = np.zeros(arr.shape, dtype=np.int16)
     y_size, x_size = arr.shape
     global_grow_chance = np.random.normal()
 
-    for row in range(1,y_size-1):
-        for col in range(1,x_size-1):
+    for row in range(1, y_size-1):
+        for col in range(1, x_size-1):
             window = arr[row-1:row+2, col-1:col+2]
-            new_arr[row][col].grow_shroom(window, global_grow_chance)
-    
-    return new_arr
+            new_arr[row][col] = arr[row][col].grow_shroom(
+                window, global_grow_chance)
+
+    for row in range(1, y_size-1):
+        for col in range(1, x_size-1):
+            arr[row][col].growth_stage = new_arr[row][col]
+
 
 def reroll_probabilities(arr):
     y_size, x_size = arr.shape
@@ -48,6 +53,7 @@ def reroll_probabilities(arr):
         for j in range(x_size):
             arr[i][j].growth_chance = new_random[i][j]
 
+
 if __name__ == "__main__":
     cells = create_cell_array()
     with lzma.open(OUTPUT_PATH, 'wb') as output:
@@ -56,7 +62,7 @@ if __name__ == "__main__":
             generation_i += 1
             start = time.time()
             reroll_probabilities(cells)
-            cells = step(cells)
+            step(cells)
             save_array_state(cells, output)
 
             reached_border = False
@@ -71,4 +77,3 @@ if __name__ == "__main__":
                 break
 
             print(f'Generation {generation_i}, took {time.time() - start}s')
-            
