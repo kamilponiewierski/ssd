@@ -1,17 +1,18 @@
 import lzma
 import pickle
+import time
 import numpy as np
 
 from cell import Cell, CellModel1
 
-SIZE_X = 300
-SIZE_Y = 200
+SIZE_Y = 720
+SIZE_X = 1280
 
 # TODO maybe add CLI support?
 OUTPUT_PATH = 'growth_log.pkl'
 
 def create_cell_array() -> np.array:
-    x, y = SIZE_X, SIZE_Y
+    x, y = SIZE_Y, SIZE_X
     arr = np.empty(shape=(x, y), dtype=object)
     for i in range(x):
         for j in range(y):
@@ -28,27 +29,45 @@ def save_array_state(arr, file):
 
 
 def step(arr):
-    x_size, y_size = arr.shape
+    y_size, x_size = arr.shape
+    global_grow_chance = np.random.normal()
 
-    for i in range(x_size):
-        for j in range(y_size):
-            neighbourhood = arr[max(
-                0, i - 2): min(x_size - 1, i + 1), max(0, j - 2): min(y_size - 1, j + 1)]
-            arr[i][j].grow_shroom(neighbourhood)
+    for row in range(1,y_size-1):
+        for col in range(1,x_size-1):
+            window = arr[row-1:row+2, col-1:col+2]
+            arr[row][col].grow_shroom(window, global_grow_chance)
+    
 
 def reroll_probabilities(arr):
-    x_size, y_size = arr.shape
-    new_random = np.random.random(size=(x_size, y_size))
+    y_size, x_size = arr.shape
+    new_random = np.random.normal(size=(y_size, x_size))
 
-    for i in range(x_size):
-        for j in range(y_size):
+    for i in range(y_size):
+        for j in range(x_size):
             arr[i][j].growth_chance = new_random[i][j]
 
 if __name__ == "__main__":
     cells = create_cell_array()
     with lzma.open(OUTPUT_PATH, 'wb') as output:
-        for r in range(150):
+        generation_i = 0
+        while True:
+            generation_i += 1
+            start = time.time()
             #TODO deepcopy before each step may be necessary
             reroll_probabilities(cells)
             step(cells)
             save_array_state(cells, output)
+
+            reached_border = False
+
+            for border in [cells[1, :], cells[-2, :], cells[:, 1], cells[:, -2]]:
+                for cell in border:
+                    if cell.growth_stage == 1:
+                        reached_border = True
+                        break
+
+            if reached_border:
+                break
+
+            print(f'Generation {generation_i}, took {time.time() - start}s')
+            
