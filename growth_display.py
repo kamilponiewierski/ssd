@@ -8,9 +8,9 @@ import pygame
 import numpy as np
 from random import randint
 
-INPUT_MOCK_PATH = 'growth_log.pkl'
-X = 600  # Zwiększenie szerokości siatki
-Y = 400  # Zwiększenie wysokości siatki
+INPUT_MOCK_PATH = 'growth_log_1c.pkl'
+X = 320  # Zwiększenie szerokości siatki
+Y = 200  # Zwiększenie wysokości siatki
 
 
 def create_array():
@@ -57,6 +57,7 @@ if __name__ == '__main__':
         while running:
             try:
                 arr: np.array = recolor_array(pickle.load(input))
+                arr = np.transpose(arr)
                 time.sleep(1/30)
                 if display is None:
                     display = pygame.display.set_mode(arr.shape) 
@@ -70,4 +71,4 @@ if __name__ == '__main__':
                 pygame.display.update()
             except EOFError:
                 break
-        pygame.quit()
+        # pygame.quit()
