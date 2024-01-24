@@ -68,7 +68,7 @@ class CellModel1c(CellModel1a):
                 return 0.0
 
 
-class Model2a(Cell):
+class CellModel2a(Cell):
     def __init__(self, position: (int, int)) -> None:
         super().__init__(position)
         self.maturity_phase = 0
