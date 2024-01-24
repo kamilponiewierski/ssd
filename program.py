@@ -3,15 +3,15 @@ import pickle
 import time
 import numpy as np
 
-from cell import CellModel1a, CellModel1c, CellModel3a, CellModel3b
+from cell import CellModel1a, CellModel1c, CellModel2a, CellModel3a, CellModel3b
 
 
 SIZE_Y = 320
 SIZE_X = 200
-CellType = CellModel3b
+CellType = CellModel3a
 
 # TODO maybe add CLI support?
-OUTPUT_PATH = "growth_log_3b.pkl"
+OUTPUT_PATH = 'growth_log_3a.pkl'
 
 
 def create_cell_array() -> np.array:
@@ -57,6 +57,20 @@ def reroll_probabilities(arr):
             arr[i][j].growth_chance = new_random[i][j]
 
 
+
+def mature_unocupied_cells(arr: np.array(CellModel2a)) -> None:
+    # with each step it is obligated to mature unoccupied cells in 2a model
+    y_size, x_size = arr.shape
+    global_mature_chance = np.random.normal()
+
+    for row in range(1, y_size - 1):
+        for col in range(1, x_size - 1):
+
+            if arr[row,col].growth_stage == 0:
+                window = arr[row - 1:row + 2, col - 1:col + 2]
+                arr[row,col].matureUnocupiedCell(window, global_mature_chance)
+
+
 if __name__ == "__main__":
     cells = create_cell_array()
     with lzma.open(OUTPUT_PATH, "wb") as output:
@@ -64,6 +78,11 @@ if __name__ == "__main__":
         while True:
             generation_i += 1
             start = time.time()
+
+            # with each step it is obligated to mature unoccupied cells in 2a model
+            if isinstance(cells[0, 0], CellModel2a):
+                mature_unocupied_cells(cells)
+
             reroll_probabilities(cells)
             step(cells, generation_i % 8)
             save_array_state(cells, output)
