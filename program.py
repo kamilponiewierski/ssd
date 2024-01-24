@@ -5,8 +5,8 @@ import numpy as np
 
 from cell import CellModel1a, CellModel1c
 
-SIZE_Y = 320
-SIZE_X = 200
+SIZE_Y = 160
+SIZE_X = 100
 
 # TODO maybe add CLI support?
 OUTPUT_PATH = 'growth_log.pkl'
