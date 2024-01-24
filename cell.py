@@ -79,8 +79,7 @@ class CellModel2a(CellModel1c):
         model_growth_chance = self.calculate_growth_chance(neighbourhood)
         if self.growth_probability > global_growth_chance:
             if model_growth_chance > np.random.random():
-                if self.maturity_phase < 3:
-                    self.growth_stage += 1
+                if self.maturity_phase < 4:
                     new_growth_stage += 1
 
         return new_growth_stage

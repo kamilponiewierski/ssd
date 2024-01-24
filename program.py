@@ -64,8 +64,6 @@ def mature_unocupied_cells(arr: np.array(CellModel2a) ) -> None:
 
     for row in range(1, y_size - 1):
         for col in range(1, x_size - 1):
-            if arr[row, col].growth_stage >0:
-                print(1)
 
             if arr[row,col].growth_stage == 0:
                 window = arr[row - 1:row + 2, col - 1:col + 2]
