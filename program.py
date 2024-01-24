@@ -5,11 +5,12 @@ import numpy as np
 
 from cell import CellModel1a, CellModel1c, CellModel2a
 
-SIZE_Y = 80
-SIZE_X = 40
+SIZE_Y = 320
+SIZE_X = 200
 
 # TODO maybe add CLI support?
 OUTPUT_PATH = 'growth_log_2a.pkl'
+
 
 
 def create_cell_array() -> np.array:
@@ -48,7 +49,6 @@ def step(arr):
 def reroll_probabilities(arr):
     y_size, x_size = arr.shape
     new_random = np.random.normal(size=(y_size, x_size))
-
 
     for i in range(y_size):
         for j in range(x_size):
