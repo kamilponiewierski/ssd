@@ -3,10 +3,10 @@ import pickle
 import time
 import numpy as np
 
-from cell import Cell, CellModel1
+from cell import CellModel1a, CellModel1c
 
-SIZE_Y = 300
-SIZE_X = 600
+SIZE_Y = 320
+SIZE_X = 200
 
 # TODO maybe add CLI support?
 OUTPUT_PATH = 'growth_log.pkl'
@@ -17,7 +17,7 @@ def create_cell_array() -> np.array:
     arr = np.empty(shape=(x, y), dtype=object)
     for i in range(x):
         for j in range(y):
-            arr[i][j] = CellModel1((i, j))
+            arr[i][j] = CellModel1c((i, j))
 
     center_x, center_y = x // 2, y // 2
     arr[center_x, center_y].growth_stage = 1

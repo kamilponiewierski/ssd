@@ -29,7 +29,20 @@ class Cell(ABC):
         self.position = position
 
 
-class CellModel1(Cell):
+class CellModel1a(Cell):
+    def _calculate_growth_chance(self, neighbour_count):
+        match neighbour_count:
+            case 0:
+                return 0.0
+            case 1:
+                return 0.125
+            case 2:
+                return 0.25
+            case 3:
+                return 0.50
+            case _:
+                return 0.0
+
     def calculate_growth_chance(self, neighbourhood: np.array) -> float:
         if self.growth_stage > 0:
             return 0.0
@@ -40,14 +53,15 @@ class CellModel1(Cell):
             if cell.growth_stage > 0:
                 shroom_count += 1
 
-        match shroom_count:
+        return self._calculate_growth_chance(shroom_count)
+
+
+class CellModel1c(CellModel1a):
+    def _calculate_growth_chance(self, neighbour_count):
+        match neighbour_count:
             case 0:
                 return 0.0
             case 1:
                 return 0.125
-            case 2:
-                return 0.25
-            case 3:
-                return 0.50
             case _:
                 return 0.0
