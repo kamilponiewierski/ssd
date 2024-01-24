@@ -8,7 +8,7 @@ import pygame
 import numpy as np
 from random import randint
 
-INPUT_MOCK_PATH = 'growth_log_1c.pkl'
+INPUT_MOCK_PATH = 'growth_log_2a.pkl'
 X = 320  # Zwiększenie szerokości siatki
 Y = 200  # Zwiększenie wysokości siatki
 
