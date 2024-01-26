@@ -38,7 +38,7 @@ def step(arr, direction):
 
     for row in range(1, y_size - 1):
         for col in range(1, x_size - 1):
-            window = arr[row - 1 : row + 2, col - 1 : col + 2]
+            window = arr[row - 1: row + 2, col - 1: col + 2]
             new_arr[row][col] = arr[row][col].grow_shroom(
                 window, global_grow_chance, direction
             )
@@ -57,29 +57,19 @@ def reroll_probabilities(arr):
             arr[i][j].growth_chance = new_random[i][j]
 
 
-
 def mature_unocupied_cells(arr: np.array(CellModel2a)) -> None:
     # with each step it is obligated to mature unoccupied cells in 2a model
     y_size, x_size = arr.shape
     global_mature_chance = np.random.normal()
-
-    # for row in range(1, y_size - 1):
-    #     for col in range(1, x_size - 1):
-    #
-    #         if arr[row,col].growth_stage == 0:
-    #             window = arr[row - 1:row + 2, col - 1:col + 2]
-    #             arr[row,col].matureUnocupiedCell(window, global_mature_chance)
 
     for index, cell in np.ndenumerate(arr):
         row = index[0]
         column = index[1]
 
         if cell.growth_stage == 0:
-            window = arr[max(0,row-1):min(row+2, y_size), max(0, column-1):min(column+2,x_size)]
+            window = arr[max(0, row-1):min(row+2, y_size),
+                         max(0, column-1):min(column+2, x_size)]
             cell.matureUnocupiedCell(window, global_mature_chance)
-
-
-
 
 
 if __name__ == "__main__":
