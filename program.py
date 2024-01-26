@@ -3,15 +3,15 @@ import pickle
 import time
 import numpy as np
 
-from cell import CellModel1a, CellModel1c, CellModel2a, CellModel3a, CellModel3b
+from cell import CellModel1a, CellModel1b, CellModel1c, CellModel2a, CellModel3a, CellModel3b
 
 
 SIZE_Y = 320
 SIZE_X = 200
-CellType = CellModel3a
+CellType = CellModel1b
 
 # TODO maybe add CLI support?
-OUTPUT_PATH = 'growth_log_3a.pkl'
+OUTPUT_PATH = 'growth_log_1b.pkl'
 
 
 def create_cell_array() -> np.array:
@@ -63,12 +63,23 @@ def mature_unocupied_cells(arr: np.array(CellModel2a)) -> None:
     y_size, x_size = arr.shape
     global_mature_chance = np.random.normal()
 
-    for row in range(1, y_size - 1):
-        for col in range(1, x_size - 1):
+    # for row in range(1, y_size - 1):
+    #     for col in range(1, x_size - 1):
+    #
+    #         if arr[row,col].growth_stage == 0:
+    #             window = arr[row - 1:row + 2, col - 1:col + 2]
+    #             arr[row,col].matureUnocupiedCell(window, global_mature_chance)
 
-            if arr[row,col].growth_stage == 0:
-                window = arr[row - 1:row + 2, col - 1:col + 2]
-                arr[row,col].matureUnocupiedCell(window, global_mature_chance)
+    for index, cell in np.ndenumerate(arr):
+        row = index[0]
+        column = index[1]
+
+        if cell.growth_stage == 0:
+            window = arr[max(0,row-1):min(row+2, y_size), max(0, column-1):min(column+2,x_size)]
+            cell.matureUnocupiedCell(window, global_mature_chance)
+
+
+
 
 
 if __name__ == "__main__":

@@ -7,8 +7,9 @@ import time
 import pygame
 import numpy as np
 from random import randint
+import ctypes
 
-INPUT_MOCK_PATH = "growth_log_3a.pkl"
+INPUT_MOCK_PATH = "growth_log_1a.pkl"
 X = 320  # Zwiększenie szerokości siatki
 Y = 200  # Zwiększenie wysokości siatki
 
@@ -40,9 +41,17 @@ def recolor_array(arr):
         case _:
             raise NotImplementedError
 
+def get_screen_resolution():
+    user32 = ctypes.windll.user32
+    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    return screensize
+
 
 if __name__ == "__main__":
+
     args = sys.argv[1:]
+
+    screen_width, screen_height = get_screen_resolution()
 
     input_file = args[0] if len(args) > 0 else INPUT_MOCK_PATH
 
@@ -50,32 +59,41 @@ if __name__ == "__main__":
         create_array()
 
     pygame.init()
-    running = True
-    display = None
+    is_paused = True
+    is_running = True
 
     with lzma.open(input_file, "rb") as input:
-        while running:
+
+        arr: np.array = recolor_array(pickle.load(input))
+        arr = np.transpose(arr)
+        display = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE)
+        pygame.display.set_caption("Display Grid")
+
+
+        while is_running:
             try:
-                arr: np.array = recolor_array(pickle.load(input))
-                arr = np.transpose(arr)
-                time.sleep(1 / 30)
-                if display is None:
-                    display = pygame.display.set_mode(arr.shape, pygame.RESIZABLE)
-                    pygame.display.set_caption("Display Grid")
 
                 for event in pygame.event.get():
-                    match event.type:
-                        case pygame.QUIT:
-                            running = False
-                        case pygame.VIDEORESIZE:
+                        if  event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                            is_running = False
+                        elif event.type == pygame.VIDEORESIZE :
                             display = pygame.display.set_mode(
                                 (event.w, event.h), pygame.RESIZABLE
                             )
+                        elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                            is_paused = not is_paused
+
+                if not is_paused:
+                    arr: np.array = recolor_array(pickle.load(input))
+                    arr = np.transpose(arr)
+                    time.sleep(1 / 15)
 
                 surf = pygame.surfarray.make_surface(arr)
                 surf = pygame.transform.scale(surf, display.get_size())
                 display.blit(surf, (0, 0))
                 pygame.display.update()
+
             except EOFError:
                 break
-        # pygame.quit()
+
+    
