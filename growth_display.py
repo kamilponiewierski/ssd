@@ -53,17 +53,17 @@ if __name__ == "__main__":
 
     screen_width, screen_height = get_screen_resolution()
 
-    input_file = args[0] if len(args) > 0 else INPUT_MOCK_PATH
+    input_file_path = args[0] if len(args) > 0 else INPUT_MOCK_PATH
 
-    if input_file == INPUT_MOCK_PATH and not os.path.exists(INPUT_MOCK_PATH):
+    if input_file_path == INPUT_MOCK_PATH and not os.path.exists(INPUT_MOCK_PATH):
         create_mock_array()
 
     pygame.init()
     is_paused = True
     is_running = True
 
-    with lzma.open(input_file, "rb") as input:
-        arr: np.array = recolor_array(pickle.load(input))
+    with lzma.open(input_file_path, "rb") as input_file:
+        arr: np.array = recolor_array(pickle.load(input_file))
         arr = np.transpose(arr)
         display = pygame.display.set_mode(
             (screen_width, screen_height), pygame.RESIZABLE)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
                         is_paused = not is_paused
 
                 if not is_paused:
-                    arr: np.array = recolor_array(pickle.load(input))
+                    arr: np.array = recolor_array(pickle.load(input_file))
                     arr = np.transpose(arr)
                     time.sleep(1 / 15)
 
@@ -93,3 +93,5 @@ if __name__ == "__main__":
 
             except EOFError:
                 break
+    # uncomment to leave the simulation open after the end of data
+    # a = input()
